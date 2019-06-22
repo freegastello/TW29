@@ -22,7 +22,4 @@ public class UserService {
 	public List<User> selectOne(Long users_id) {return userDAO.selectOne(users_id);}
 
 	public List<User> getAll() {return userDAO.getAll();}
-
-
-
 }
