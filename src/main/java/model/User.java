@@ -1,7 +1,6 @@
 package model;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "users")
@@ -33,7 +32,7 @@ public class User {
 		this.users_id = users_id;
 	}
 
-	@NotBlank(message = "Name cannot be null")
+//	@NotBlank(message = "Name cannot be null")
 	public String getName() {
 		return name;
 	}

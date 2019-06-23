@@ -12,12 +12,30 @@ import org.hibernate.service.ServiceRegistry;
 import java.util.List;
 
 public class UserHibernateDao {
-		private static Configuration config;
-//		private static SessionFactory sessionFactory;
-		private Session session;
-
 //	private static SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
 	private static SessionFactory sessionFactory = configureSessionFactory();
+
+	private static SessionFactory configureSessionFactory() throws HibernateException {
+		Configuration configuration = new Configuration()
+				.setProperty( "hibernate.connection.driver_class",		"com.mysql.jdbc.Driver")
+				.setProperty( "hibernate.connection.url",				"jdbc:mysql://localhost:3306/crud?useSSL=false")
+				.setProperty( "hibernate.connection.username",			"admin")
+				.setProperty( "hibernate.connection.password",			"admin")
+				.setProperty( "hibernate.connection.pool_size",			"2")
+				.setProperty( "hibernate.connection.autocommit",		"false")
+				.setProperty( "hibernate.cache.provider_class",			"org.hibernate.cache.NoCacheProvider")
+				.setProperty( "hibernate.cache.use_second_level_cache", "false")
+				.setProperty( "hibernate.cache.use_query_cache",		"false")
+				.setProperty( "hibernate.dialect",						"org.hibernate.dialect.MySQL5Dialect")
+				.setProperty( "hibernate.show_sql",						"true")
+				.setProperty( "hibernate.current_session_context_class","thread")
+				.addAnnotatedClass(model.User.class)
+		;
+		ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+				.applySettings(configuration.getProperties())
+				.build();
+		return configuration.buildSessionFactory(serviceRegistry);
+	}
 
 	public List getAll () {
 		Session session = sessionFactory.openSession();
@@ -30,6 +48,9 @@ public class UserHibernateDao {
 	}
 
 	public void addUser(User user) {
+		if (!user.getName().matches("[\\w]+")) return;
+		if (!user.getLogin().matches("[\\w]+")) return;
+		if (!user.getPassword().matches("[\\w]+")) return;
 		boolean bool = searchFromSqlNameExist(user.getName());
 		if (bool) {return;}
 		Session session = sessionFactory.openSession();
@@ -67,6 +88,7 @@ public class UserHibernateDao {
 	}
 
 	public void update(User user) {
+		if (!user.getName().matches("[\\w]+")) return;
 		boolean bool = searchFromSqlNameExist(user.getName());
 		if (bool) {return;}
 		Session session = sessionFactory.openSession();
@@ -132,26 +154,24 @@ public class UserHibernateDao {
 		return false;
 	}
 
-	private static SessionFactory configureSessionFactory() throws HibernateException {
-		Configuration configuration = new Configuration()
-				.setProperty( "hibernate.connection.driver_class",		 "com.mysql.jdbc.Driver" )
-				.setProperty( "hibernate.connection.url",				 "jdbc:mysql://localhost:3306/crud" )
-				.setProperty( "hibernate.connection.username",			 "admin" )
-				.setProperty( "hibernate.connection.password",			 "admin" )
-				.setProperty( "hibernate.connection.pool_size",			 "2" )
-				.setProperty( "hibernate.connection.autocommit",		 "false" )
-				.setProperty( "hibernate.cache.provider_class",			 "org.hibernate.cache.NoCacheProvider" )
-				.setProperty( "hibernate.cache.use_second_level_cache",  "false" )
-				.setProperty( "hibernate.cache.use_query_cache",		 "false" )
-				.setProperty( "hibernate.dialect",						 "org.hibernate.dialect.MySQL5Dialect" )
-				.setProperty( "hibernate.show_sql",						 "true" )
-				.setProperty( "hibernate.current_session_context_class", "thread" )
-				.addAnnotatedClass(model.User.class)
-		;
-		ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-				.applySettings(configuration.getProperties()).build();
-		return configuration.buildSessionFactory(serviceRegistry);
-	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //	public class LiveHibernateConnector implements IHibernateConnector {

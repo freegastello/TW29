@@ -13,6 +13,7 @@ public class GetIndexPageServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//		request.setAttribute("error", "User with the same name already exists");
 		request.setAttribute("users", userService.getAll());
 		request.getRequestDispatcher("/WEB-INF/view/index.jsp").forward(request, response);
 	}

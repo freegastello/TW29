@@ -10,6 +10,12 @@
 	<h1>Создание CRUD приложения</h1>
 </div>
 
+<div>
+	<c:forEach var="err" items="${requestScope.error}">
+		<c:out value="${err}"/>
+	</c:forEach>
+</div>
+
 <div  id="three" style="border: 2px solid black;">
 	<h2>Создание нового пользователя</h2><br/>
 	<form method="post" action="<c:url value='/add_user'/>">

@@ -1,7 +1,6 @@
 package servlet;
 import bl.UserService;
 import model.User;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
