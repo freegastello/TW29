@@ -1,17 +1,23 @@
 package DAO;
 
 import model.User;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import org.hibernate.service.ServiceRegistry;
+
 import java.util.List;
 
 public class UserHibernateDao {
-	private static SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
+		private static Configuration config;
+//		private static SessionFactory sessionFactory;
+		private Session session;
+
+//	private static SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
+	private static SessionFactory sessionFactory = configureSessionFactory();
 
 	public List getAll () {
 		Session session = sessionFactory.openSession();
@@ -126,26 +132,138 @@ public class UserHibernateDao {
 		return false;
 	}
 
-
-	public class Util {
-		private static final String DB_DRIVER = "com.mysql.jdbc.Driver";
-		private static final String DB_URL = "jdbc:mysql://localhost:3306/crud";
-		private static final String DB_USERNAME = "admin";
-		private static final String DB_PASSWORD = "admin";
-
-		public Connection getConnection() {
-			Connection connection = null;
-			try {
-				Class.forName(DB_DRIVER);
-				connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
-				System.out.println("Connection OK!");
-			} catch (ClassNotFoundException | SQLException e) {
-				System.out.println("Connection ERROR!");
-				e.printStackTrace();
-			}
-			return connection;
-		}
+	private static SessionFactory configureSessionFactory() throws HibernateException {
+		Configuration configuration = new Configuration()
+				.setProperty( "hibernate.connection.driver_class",		 "com.mysql.jdbc.Driver" )
+				.setProperty( "hibernate.connection.url",				 "jdbc:mysql://localhost:3306/crud" )
+				.setProperty( "hibernate.connection.username",			 "admin" )
+				.setProperty( "hibernate.connection.password",			 "admin" )
+				.setProperty( "hibernate.connection.pool_size",			 "2" )
+				.setProperty( "hibernate.connection.autocommit",		 "false" )
+				.setProperty( "hibernate.cache.provider_class",			 "org.hibernate.cache.NoCacheProvider" )
+				.setProperty( "hibernate.cache.use_second_level_cache",  "false" )
+				.setProperty( "hibernate.cache.use_query_cache",		 "false" )
+				.setProperty( "hibernate.dialect",						 "org.hibernate.dialect.MySQL5Dialect" )
+				.setProperty( "hibernate.show_sql",						 "true" )
+				.setProperty( "hibernate.current_session_context_class", "thread" )
+				.addAnnotatedClass(model.User.class)
+		;
+		ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+				.applySettings(configuration.getProperties()).build();
+		return configuration.buildSessionFactory(serviceRegistry);
 	}
+
+
+//	public class LiveHibernateConnector implements IHibernateConnector {
+//		private String DB_DRIVER_NAME = "com.mysql.jdbc.Driver";
+//		private String DB_URL		  = "jdbc:mysql://localhost:3306/crud";
+//		private String DB_USERNAME	  = "admin";
+//		private String DB_PASSWORD	  = "admin";
+//		private String DIALECT		  = "org.hibernate.dialect.MySQL5Dialect";
+//		private String HBM2DLL		  = "create";
+//		private String SHOW_SQL		  = "true";
+//
+//		private static Configuration config;
+//		private static SessionFactory sessionFactory;
+//		private Session session;
+//
+//		private boolean CLOSE_AFTER_TRANSACTION = false;
+
+
+
+//		public LiveHibernateConnector() {
+//			config = new Configuration();
+//			config.setProperty("hibernate.connector.driver_class",	"com.mysql.jdbc.Driver");
+//			config.setProperty("hibernate.connection.url",			"jdbc:mysql://localhost:3306/crud");
+//			config.setProperty("hibernate.connection.username",		"admin");
+//			config.setProperty("hibernate.connection.password",		"admin");
+//			config.setProperty("hibernate.dialect",					"org.hibernate.dialect.MySQL5Dialect");
+//			config.setProperty("hibernate.hbm2dll.auto",			"update");
+//			config.setProperty("hibernate.show_sql",				"true");
+//			config.setProperty("connection.provider_class",			"org.hibernate.cache.NoCacheProvider");
+//
+//
+//			/** Resource mapping */
+////        config.addAnnotatedClass(User.class);
+//			sessionFactory = config.buildSessionFactory();
+//		}
+//
+//		public HibWrapper openSession() throws HibernateException {
+//			return new HibWrapper(getOrCreateSession(), CLOSE_AFTER_TRANSACTION);
+//		}
+//
+//		public Session getOrCreateSession() throws HibernateException {
+//			if (session == null) {
+//				session = sessionFactory.openSession();
+//			}
+//			return session;
+//		}
+//
+//		public void reconnect() throws HibernateException {
+//			this.sessionFactory = config.buildSessionFactory();
+//		}
+
+
+//	}
+
+
+
+//	public class LiveHibernateConnector implements IHibernateConnector {
+//		private String DB_DRIVER_NAME = "com.mysql.jdbc.Driver";
+//		private String DB_URL		  = "jdbc:mysql://localhost:3306/crud";
+//		private String DB_USERNAME	  = "admin";
+//		private String DB_PASSWORD	  = "admin";
+//		private String DIALECT		  = "org.hibernate.dialect.MySQL5Dialect";
+//		private String HBM2DLL		  = "create";
+//		private String SHOW_SQL		  = "true";
+//
+//		private static Configuration config;
+//		private static SessionFactory sessionFactory;
+//		private Session session;
+//
+//		private boolean CLOSE_AFTER_TRANSACTION = false;
+//
+//		public LiveHibernateConnector() {
+//
+//			config = new Configuration();
+//
+//			config.setProperty("hibernate.connector.driver_class", DB_DRIVER_NAME);
+//			config.setProperty("hibernate.connection.url",         DB_URL);
+//			config.setProperty("hibernate.connection.username",    DB_USERNAME);
+//			config.setProperty("hibernate.connection.password",    DB_PASSWORD);
+//			config.setProperty("hibernate.dialect",                DIALECT);
+//			config.setProperty("hibernate.hbm2dll.auto",           HBM2DLL);
+//			config.setProperty("hibernate.show_sql",               SHOW_SQL);
+//
+//			/* Config connection pools */
+//
+//			config.setProperty("connection.provider_class", "org.hibernate.connection.C3P0ConnectionProvider");
+//			config.setProperty("hibernate.c3p0.min_size", "5");
+//			config.setProperty("hibernate.c3p0.max_size", "20");
+//			config.setProperty("hibernate.c3p0.timeout", "300");
+//			config.setProperty("hibernate.c3p0.max_statements", "50");
+//			config.setProperty("hibernate.c3p0.idle_test_period", "3000");
+//
+//			/** Resource mapping */
+////        config.addAnnotatedClass(User.class);
+//			sessionFactory = config.buildSessionFactory();
+//		}
+//
+//		public HibWrapper openSession() throws HibernateException {
+//			return new HibWrapper(getOrCreateSession(), CLOSE_AFTER_TRANSACTION);
+//		}
+//
+//		public Session getOrCreateSession() throws HibernateException {
+//			if (session == null) {
+//				session = sessionFactory.openSession();
+//			}
+//			return session;
+//		}
+//
+//		public void reconnect() throws HibernateException {
+//			this.sessionFactory = config.buildSessionFactory();
+//		}
+//	}
 
 
 
