@@ -5,13 +5,15 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.List;
 
 public class UserHibernateDao {
-	private static SessionFactory sessionFactory;
+	private static SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
 
 	public List getAll () {
-		sessionFactory = new Configuration().configure().buildSessionFactory();
 		Session session = sessionFactory.openSession();
 		Transaction transaction;
 		transaction = session.beginTransaction();
@@ -125,7 +127,25 @@ public class UserHibernateDao {
 	}
 
 
+	public class Util {
+		private static final String DB_DRIVER = "com.mysql.jdbc.Driver";
+		private static final String DB_URL = "jdbc:mysql://localhost:3306/crud";
+		private static final String DB_USERNAME = "admin";
+		private static final String DB_PASSWORD = "admin";
 
+		public Connection getConnection() {
+			Connection connection = null;
+			try {
+				Class.forName(DB_DRIVER);
+				connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+				System.out.println("Connection OK!");
+			} catch (ClassNotFoundException | SQLException e) {
+				System.out.println("Connection ERROR!");
+				e.printStackTrace();
+			}
+			return connection;
+		}
+	}
 
 
 
