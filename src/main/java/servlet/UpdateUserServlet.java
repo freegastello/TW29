@@ -17,7 +17,7 @@ public class UpdateUserServlet extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		User user = createUser(request);
 		userService.update(user);
-		response.sendRedirect(request.getContextPath() + "/");
+		response.sendRedirect("/");
 	}
 
 	@Override
@@ -28,7 +28,6 @@ public class UpdateUserServlet extends HttpServlet {
 
 	private User createUser(HttpServletRequest request) {
 		User user = new User();
-		user.setUsers_id(Long.valueOf(request.getParameter("users_id")));
 
 		if (request.getParameter("name") != null && request.getParameter("name").length() > 0) {
 			user.setName(request.getParameter("name"));

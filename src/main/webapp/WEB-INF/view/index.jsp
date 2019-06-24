@@ -9,26 +9,26 @@
 <div id="one" style="border: 1px solid yellow;">
 	<h1>Создание CRUD приложения</h1>
 </div>
-
 <div>
-	<c:forEach var="err" items="${requestScope.error}">
-		<c:out value="${err}"/>
-	</c:forEach>
+	<h3><c:out value="${requestScope.error}"/></h3>
 </div>
-
 <div  id="three" style="border: 2px solid black;">
 	<h2>Создание нового пользователя</h2><br/>
 	<form method="post" action="<c:url value='/add_user'/>">
-		<label><input type="text" name="name"></label>Имя<br>
-		<label><input type="text" name="login"></label>Логин<br>
-		<label><input type="text" name="password"></label>Пароль<br>
-		<input type="submit" value="Ok" name="Ok"><br>
-		<br>
+
+	<label><input type="text" name="name"	  value="${requestScope.name}"    ></label>Имя<br>
+	<label><input type="text" name="login"	  value="${requestScope.login}"   ></label>Логин<br>
+	<label><input type="text" name="password" value="${requestScope.password}"></label>Пароль<br>
+	<input type="submit" value="Ok" name="Ok"><br>
+	<br>
+<%--</c:forEach>--%>
+
 	</form>
 </div>
 
 <div id="two" border="2" style="border: 1px solid red;" width="50%">
 	<h2>Список пользователей:</h2>
+
 	<table border="0" align="left" cellspacing="1" bgcolor="#000000" width="30%">
 		<tr bgcolor="#FFFFFF" height="40px">
 			<td align="center">users_id</td>

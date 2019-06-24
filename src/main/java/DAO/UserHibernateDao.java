@@ -8,12 +8,13 @@ import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
-
+import servlet.AddUserServlet;
 import java.util.List;
 
 public class UserHibernateDao {
 //	private static SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
 	private static SessionFactory sessionFactory = configureSessionFactory();
+	private static String str = "(0-9A-Za-zА-Яа-я_)";
 
 	private static SessionFactory configureSessionFactory() throws HibernateException {
 		Configuration configuration = new Configuration()
@@ -47,12 +48,29 @@ public class UserHibernateDao {
 		return users;
 	}
 
-	public void addUser(User user) {
-		if (!user.getName().matches("[\\w]+")) return;
-		if (!user.getLogin().matches("[\\w]+")) return;
-		if (!user.getPassword().matches("[\\w]+")) return;
+	private boolean errorCheck(User user) {
+		if (user.getName() == null || (!user.getName().matches("[\\w]+"))) {
+			AddUserServlet.mess = "Enter your name " + str;
+			return false;
+		}
+		if (user.getLogin() == null || (!user.getLogin().matches("[\\w]+"))) {
+			AddUserServlet.mess = "Enter your login " + str;
+			return false;
+		}
+		if (user.getPassword() == null || (!user.getPassword().matches("[\\w]+"))) {
+			AddUserServlet.mess = "Enter your password " + str;
+			return false;
+		}
 		boolean bool = searchFromSqlNameExist(user.getName());
-		if (bool) {return;}
+		if (bool) {
+			AddUserServlet.mess = "User with the same name already exists";
+			return false;
+		}
+		return true;
+	}
+
+	public void addUser(User user) {
+		if (!errorCheck(user)) {return;}
 		Session session = sessionFactory.openSession();
 		Transaction transaction;
 		transaction = session.beginTransaction();
