@@ -1,5 +1,6 @@
 package DAO;
 import model.User;
+import servlet.AddUserServlet;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
@@ -7,7 +8,7 @@ import java.util.List;
 
 public class UserDAO {
 	private static Connection connection;
-
+	private static String str = "(0-9A-Za-zА-Яа-я_)";
 	public UserDAO() {getConnect();}
 
 	private void getConnect() {
@@ -99,13 +100,32 @@ public class UserDAO {
 		return false;
 	}
 
-	public void addUser(User user) {
+	private boolean errorCheck(User user) {
+		if (user.getName() == null || (!user.getName().matches("[\\w]+"))) {
+			AddUserServlet.mess = "Enter your name " + str;
+			return false;
+		}
+		if (user.getLogin() == null || (!user.getLogin().matches("[\\w]+"))) {
+			AddUserServlet.mess = "Enter your login " + str;
+			return false;
+		}
+		if (user.getPassword() == null || (!user.getPassword().matches("[\\w]+"))) {
+			AddUserServlet.mess = "Enter your password " + str;
+			return false;
+		}
+		boolean bool = searchFromSqlNameExist(user.getName());
+		if (bool) {
+			AddUserServlet.mess = "User with the same name already exists";
+			return false;
+		}
+		return true;
+	}
+
+	public boolean addUser(User user) {
+		if (!errorCheck(user)) {return false;}
 		String userName = user.getName();
 		String userLogin = user.getLogin();
 		String userPassword = user.getPassword();
-
-		boolean bool = searchFromSqlNameExist(userName);
-		if (bool) {return;}
 
 		String queryInsert = "INSERT INTO users (name, login, password) VALUE (?, ?, ?);";
 		try (final PreparedStatement addInsert = connection.prepareStatement(queryInsert)) {
@@ -116,19 +136,19 @@ public class UserDAO {
 				addInsert.setString(1, userName);
 			} else {
 				System.out.println("ERROR!!! addUser -> INSERT name не введён. Вставка не произведена.");
-				return;
+				return false;
 			}
 			if (userLogin != null && userLogin.length() > 0) {
 				addInsert.setString(2, userLogin);
 			} else {
 				System.out.println("ERROR!!! addUser -> INSERT login не введён. Вставка не произведена.");
-				return;
+				return false;
 			}
 			if (userPassword != null && userPassword.length() > 0) {
 				addInsert.setString(3, userPassword);
 			} else {
 				System.out.println("ERROR!!! addUser -> INSERT password не введён. Вставка не произведена.");
-				return;
+				return false;
 			}
 			int num = addInsert.executeUpdate();
 			System.out.println("-addUser- Произведено = " + num + " вставок");
@@ -136,6 +156,7 @@ public class UserDAO {
 			System.out.println("ERROR!!! -addUser- SELECT + INSERT");
 			e.printStackTrace();
 		}
+		return true;
 	}
 
 	public void delete(Long users_id) {

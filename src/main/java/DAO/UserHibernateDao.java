@@ -69,16 +69,6 @@ public class UserHibernateDao {
 		return true;
 	}
 
-//	public void addUser(User user) {
-//		if (!errorCheck(user)) {return;}
-//		Session session = sessionFactory.openSession();
-//		Transaction transaction;
-//		transaction = session.beginTransaction();
-//		session.save(user);
-//		transaction.commit();
-//		session.close();
-//	}
-
 	public boolean addUser(User user) {
 		if (!errorCheck(user)) {return false;}
 		Session session = sessionFactory.openSession();
