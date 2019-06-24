@@ -22,6 +22,7 @@ public class UpdateUserServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
 		request.setAttribute("userMap", userService.selectOne(Long.valueOf(request.getParameter("users_id"))));
 		request.getRequestDispatcher("/WEB-INF/view/update.jsp").forward(request, response);
 	}

@@ -16,9 +16,9 @@ public class GetIndexPageServlet extends HttpServlet {
 		if (AddUserServlet.mess != null) {
 			request.setAttribute("error", AddUserServlet.mess);
 			AddUserServlet.mess = null;
-			request.setAttribute("name", AddUserServlet.newUser.getName());
-			request.setAttribute("login", AddUserServlet.newUser.getLogin());
-			request.setAttribute("password", AddUserServlet.newUser.getPassword());
+			request.setAttribute("name",		request.getParameter("name"));
+			request.setAttribute("login",		request.getParameter("login"));
+			request.setAttribute("password",	request.getParameter("password"));
 		}
 		request.setAttribute("users", userService.getAll());
 		request.getRequestDispatcher("/WEB-INF/view/index.jsp").forward(request, response);

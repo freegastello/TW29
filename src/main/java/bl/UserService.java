@@ -9,7 +9,12 @@ public class UserService {
 	private UserHibernateDao userDAO = new UserHibernateDao();
 
 
-	public void addUser(User user) {userDAO.addUser(user);}
+	public boolean addUser(User user) {
+		if (userDAO.addUser(user)) {
+			return true;
+		}
+		return false;
+	}
 
 	public void delete(Long users_id) {userDAO.delete(users_id);}
 

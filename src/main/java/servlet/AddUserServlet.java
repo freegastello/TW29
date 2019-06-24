@@ -12,13 +12,18 @@ import java.io.IOException;
 public class AddUserServlet extends HttpServlet {
 	private UserService userService = new UserService();
 	public static String mess;
-	public static User newUser;
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		request.setCharacterEncoding("UTF-8");
-		newUser = createUser(request);
-		userService.addUser(newUser);
-		response.sendRedirect("/");
+		User user = createUser(request);
+		if (!userService.addUser(user)) {
+			response.sendRedirect("/?name="
+					+ request.getParameter("name")
+					+ "&login=" + request.getParameter("login")
+					+ "&password=" + request.getParameter("password"));
+		} else {
+			response.sendRedirect("/");
+		}
 	}
 
 	private User createUser(HttpServletRequest request) {
