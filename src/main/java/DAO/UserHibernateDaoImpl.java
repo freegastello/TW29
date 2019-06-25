@@ -1,42 +1,19 @@
 package DAO;
 
 import model.User;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.service.ServiceRegistry;
 import servlet.AddUserServlet;
+import util.DBUtils;
 import java.util.List;
 
-public class UserHibernateDao {
+public class UserHibernateDaoImpl implements UserDao {
 //	private static SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
-	private static SessionFactory sessionFactory = configureSessionFactory();
+//	private static SessionFactory sessionFactory = configureSessionFactory();
+	private static SessionFactory sessionFactory = DBUtils.getDBUtils().configureSessionFactory();
 	private static String str = "(0-9A-Za-zА-Яа-я_)";
-
-	private static SessionFactory configureSessionFactory() throws HibernateException {
-		Configuration configuration = new Configuration()
-				.setProperty( "hibernate.connection.driver_class",		"com.mysql.jdbc.Driver")
-				.setProperty( "hibernate.connection.url",				"jdbc:mysql://localhost:3306/crud?useSSL=false")
-				.setProperty( "hibernate.connection.username",			"admin")
-				.setProperty( "hibernate.connection.password",			"admin")
-				.setProperty( "hibernate.connection.pool_size",			"2")
-				.setProperty( "hibernate.connection.autocommit",		"false")
-				.setProperty( "hibernate.cache.provider_class",			"org.hibernate.cache.NoCacheProvider")
-				.setProperty( "hibernate.cache.use_second_level_cache", "false")
-				.setProperty( "hibernate.cache.use_query_cache",		"false")
-				.setProperty( "hibernate.dialect",						"org.hibernate.dialect.MySQL5Dialect")
-				.setProperty( "hibernate.show_sql",						"true")
-				.setProperty( "hibernate.current_session_context_class","thread")
-				.addAnnotatedClass(model.User.class)
-		;
-		ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-				.applySettings(configuration.getProperties())
-				.build();
-		return configuration.buildSessionFactory(serviceRegistry);
-	}
+	private String reg = "[0-9A-Za-zА-Яа-я_]+";
 
 	public List getAll () {
 		Session session = sessionFactory.openSession();
@@ -48,16 +25,16 @@ public class UserHibernateDao {
 		return users;
 	}
 
-	private boolean errorCheck(User user) {
-		if (user.getName() == null || (!user.getName().matches("[\\w]+"))) {
+	public boolean errorCheck(User user) {
+		if (user.getName() == null || (!user.getName().matches(reg))) {
 			AddUserServlet.mess = "Enter your name " + str;
 			return false;
 		}
-		if (user.getLogin() == null || (!user.getLogin().matches("[\\w]+"))) {
+		if (user.getLogin() == null || (!user.getLogin().matches(reg))) {
 			AddUserServlet.mess = "Enter your login " + str;
 			return false;
 		}
-		if (user.getPassword() == null || (!user.getPassword().matches("[\\w]+"))) {
+		if (user.getPassword() == null || (!user.getPassword().matches(reg))) {
 			AddUserServlet.mess = "Enter your password " + str;
 			return false;
 		}
@@ -108,8 +85,6 @@ public class UserHibernateDao {
 
 	public void update(User user) {
 		if (!user.getName().matches("[\\w]+")) return;
-		boolean bool = searchFromSqlNameExist(user.getName());
-		if (bool) {return;}
 		Session session = sessionFactory.openSession();
 		Transaction transaction;
 		transaction = session.beginTransaction();
@@ -158,7 +133,7 @@ public class UserHibernateDao {
 		session.close();
 	}
 
-	private boolean searchFromSqlNameExist(String userName) {
+	public boolean searchFromSqlNameExist(String userName) {
 		Session session = sessionFactory.openSession();
 		Transaction transaction;
 		transaction = session.beginTransaction();
@@ -319,7 +294,7 @@ public class UserHibernateDao {
 /** Do not delete */
 //	public static void main(String[] args) {
 //		sessionFactory = new Configuration().configure().buildSessionFactory();
-//		UserHibernateDao userHibernateDao = new UserHibernateDao();
+//		UserHibernateDaoImpl userHibernateDao = new UserHibernateDaoImpl();
 //		System.out.println("Adding user records to the DB");
 //		User user = new User(null,"Hibernate3","hiLog3","hiPass3");
 //		userHibernateDao.addUser(user);

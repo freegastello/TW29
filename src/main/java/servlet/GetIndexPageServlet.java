@@ -13,6 +13,7 @@ public class GetIndexPageServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
 		if (AddUserServlet.mess != null) {
 			request.setAttribute("error", AddUserServlet.mess);
 			AddUserServlet.mess = null;

@@ -1,12 +1,13 @@
 package bl;
 
-import DAO.UserHibernateDao;
+import DAO.UserHibernateDaoImpl;
 import model.User;
+
 import java.util.List;
 
 public class UserService {
-//	private UserDAO userDAO = new UserDAO();
-	private UserHibernateDao userDAO = new UserHibernateDao();
+//	private UserDAOImpl userDAO = new UserDAOImpl();
+	private UserHibernateDaoImpl userDAO = new UserHibernateDaoImpl();
 
 
 	public boolean addUser(User user) {

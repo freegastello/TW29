@@ -6,18 +6,19 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDAO {
+public class UserDAOImpl implements UserDao {
 	private static Connection connection;
-	private static String str = "(0-9A-Za-zА-Яа-я_)";
-	public UserDAO() {getConnect();}
+	private String reg = "[0-9A-Za-zА-Яа-я_]+";
+	private static String str = "0-9A-Za-zА-Яа-я_";
+	public UserDAOImpl() {getConnect();}
 
 	private void getConnect() {
 		if (driverValidate()) {
 			try {
-				String url = "jdbc:mysql://localhost:3306/crud?useSSL=false";
+				String url  = "jdbc:mysql://localhost:3306/crud?useSSL=false";
 				String user = "admin";
 				String pass = "admin";
-				connection = DriverManager.getConnection(url, user, pass);
+				connection  = DriverManager.getConnection(url, user, pass);
 				System.out.println("Подключение прошло успешно!");
 			} catch (SQLException e) {
 				System.out.println("ОШИБКА подключения getConnect");
@@ -82,7 +83,7 @@ public class UserDAO {
 		return arrayList;
 	}
 
-	private boolean searchFromSqlNameExist(String userName) {
+	public boolean searchFromSqlNameExist(String userName) {
 		String query = "SELECT * FROM users WHERE name = '" + userName + "';";
 		PreparedStatement statement;
 		try {
@@ -100,22 +101,22 @@ public class UserDAO {
 		return false;
 	}
 
-	private boolean errorCheck(User user) {
-		if (user.getName() == null || (!user.getName().matches("[\\w]+"))) {
+	public boolean errorCheck(User user) {
+		if (user.getName() == null || (!user.getName().matches(reg))) {
 			AddUserServlet.mess = "Enter your name " + str;
-			return false;
-		}
-		if (user.getLogin() == null || (!user.getLogin().matches("[\\w]+"))) {
-			AddUserServlet.mess = "Enter your login " + str;
-			return false;
-		}
-		if (user.getPassword() == null || (!user.getPassword().matches("[\\w]+"))) {
-			AddUserServlet.mess = "Enter your password " + str;
 			return false;
 		}
 		boolean bool = searchFromSqlNameExist(user.getName());
 		if (bool) {
 			AddUserServlet.mess = "User with the same name already exists";
+			return false;
+		}
+		if (user.getLogin() == null || (!user.getLogin().matches(reg))) {
+			AddUserServlet.mess = "Enter your login " + str;
+			return false;
+		}
+		if (user.getPassword() == null || (!user.getPassword().matches(reg))) {
+			AddUserServlet.mess = "Enter your password " + str;
 			return false;
 		}
 		return true;
@@ -176,6 +177,7 @@ public class UserDAO {
 	}
 
 	public void update(User user) {
+		if (!user.getName().matches("[\\w]+")) return;
 		Long   userUsers_id	= user.getUsers_id();
 		String userName		= user.getName();
 		String userLogin	= user.getLogin();

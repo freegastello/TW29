@@ -22,13 +22,15 @@ public class UpdateUserServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+		request.setCharacterEncoding("UTF-8");
 		request.setAttribute("userMap", userService.selectOne(Long.valueOf(request.getParameter("users_id"))));
 		request.getRequestDispatcher("/WEB-INF/view/update.jsp").forward(request, response);
 	}
 
 	private User createUser(HttpServletRequest request) {
 		User user = new User();
+
+		user.setUsers_id(Long.valueOf(request.getParameter("users_id")));
 
 		if (request.getParameter("name") != null && request.getParameter("name").length() > 0) {
 			user.setName(request.getParameter("name"));
