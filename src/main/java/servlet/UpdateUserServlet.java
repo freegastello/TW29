@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 
 @WebServlet("/update")
 public class UpdateUserServlet extends HttpServlet {
@@ -16,14 +17,22 @@ public class UpdateUserServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		request.setCharacterEncoding("UTF-8");
 		User user = createUser(request);
-		userService.update(user);
+		try {
+			userService.update(user);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		response.sendRedirect("/");
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
-		request.setAttribute("userMap", userService.selectOne(Long.valueOf(request.getParameter("users_id"))));
+		try {
+			request.setAttribute("userMap", userService.selectOne(Long.valueOf(request.getParameter("users_id"))));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		request.getRequestDispatcher("/WEB-INF/view/update.jsp").forward(request, response);
 	}
 

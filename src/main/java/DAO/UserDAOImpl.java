@@ -1,46 +1,16 @@
 package DAO;
 import model.User;
 import servlet.AddUserServlet;
+import util.DBUtils;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserDAOImpl implements UserDao {
-	private static Connection connection;
+	private static Connection connection = DBUtils.getDBUtils().getConnection();
 	private String reg = "[0-9A-Za-zА-Яа-я_]+";
 	private static String str = "0-9A-Za-zА-Яа-я_";
-	public UserDAOImpl() {getConnect();}
-
-	private void getConnect() {
-		if (driverValidate()) {
-			try {
-				String url  = "jdbc:mysql://localhost:3306/crud?useSSL=false";
-				String user = "admin";
-				String pass = "admin";
-				connection  = DriverManager.getConnection(url, user, pass);
-				System.out.println("Подключение прошло успешно!");
-			} catch (SQLException e) {
-				System.out.println("ОШИБКА подключения getConnect");
-				e.printStackTrace();
-			}
-		} else {
-			System.out.println("Драйвер не подключился");
-		}
-	}
-
-	private boolean driverValidate() {
-		try {
-			String driverName = "com.mysql.jdbc.Driver";
-			Class.forName(driverName);
-			System.out.println("Драйвер подключён");
-		} catch (ClassNotFoundException e) {
-			System.out.println("Verefication Driver for All FAILED!!!!!!!");
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
 
 	public List<User> selectOne(Long users_id) {
 		List<User> arrayList = new ArrayList<>();

@@ -11,7 +11,7 @@ import java.util.List;
 public class UserHibernateDaoImpl implements UserDao {
 //	private static SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
 //	private static SessionFactory sessionFactory = configureSessionFactory();
-	private static SessionFactory sessionFactory = DBUtils.getDBUtils().configureSessionFactory();
+	private static SessionFactory sessionFactory = DBUtils.getDBUtils().getConfiguration();
 	private static String str = "(0-9A-Za-zА-Яа-я_)";
 	private String reg = "[0-9A-Za-zА-Яа-я_]+";
 

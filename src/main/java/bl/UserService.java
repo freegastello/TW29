@@ -1,27 +1,26 @@
 package bl;
-
-import DAO.UserHibernateDaoImpl;
+import DAO.UserDao;
 import model.User;
-
+import util.Application;
+import java.sql.SQLException;
 import java.util.List;
 
 public class UserService {
-//	private UserDAOImpl userDAO = new UserDAOImpl();
-	private UserHibernateDaoImpl userDAO = new UserHibernateDaoImpl();
+	private UserDao userDAO = new Application().start();
 
 
-	public boolean addUser(User user) {
+	public boolean addUser(User user) throws SQLException {
 		if (userDAO.addUser(user)) {
 			return true;
 		}
 		return false;
 	}
 
-	public void delete(Long users_id) {userDAO.delete(users_id);}
+	public void delete(Long users_id) throws SQLException {userDAO.delete(users_id);}
 
-	public void update(User user) {userDAO.update(user);}
+	public void update(User user) throws SQLException {userDAO.update(user);}
 
-	public List<User> selectOne(Long users_id) {return userDAO.selectOne(users_id);}
+	public List<User> selectOne(Long users_id) throws SQLException {return userDAO.selectOne(users_id);}
 
-	public List<User> getAll() {return userDAO.getAll();}
+	public List<User> getAll() throws SQLException {return userDAO.getAll();}
 }

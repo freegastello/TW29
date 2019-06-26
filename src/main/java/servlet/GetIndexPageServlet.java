@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 
 @WebServlet("/")
 public class GetIndexPageServlet extends HttpServlet {
@@ -14,6 +15,9 @@ public class GetIndexPageServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html; charset=UTF-8");
+		System.out.println("request = " + request.getParameter("name"));
+
 		if (AddUserServlet.mess != null) {
 			request.setAttribute("error", AddUserServlet.mess);
 			AddUserServlet.mess = null;
@@ -21,7 +25,11 @@ public class GetIndexPageServlet extends HttpServlet {
 			request.setAttribute("login",		request.getParameter("login"));
 			request.setAttribute("password",	request.getParameter("password"));
 		}
-		request.setAttribute("users", userService.getAll());
+		try {
+			request.setAttribute("users", userService.getAll());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		request.getRequestDispatcher("/WEB-INF/view/index.jsp").forward(request, response);
 	}
 }

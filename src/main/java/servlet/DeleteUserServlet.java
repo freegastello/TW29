@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 
 @WebServlet("/delete")
 public class DeleteUserServlet extends HttpServlet {
@@ -13,7 +14,11 @@ public class DeleteUserServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse resp) throws IOException {
         request.setCharacterEncoding("UTF-8");
-		userService.delete(Long.valueOf(request.getParameter("users_id")));
-        resp.sendRedirect(request.getContextPath() + "/");
+		try {
+			userService.delete(Long.valueOf(request.getParameter("users_id")));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		resp.sendRedirect(request.getContextPath() + "/");
     }
 }
