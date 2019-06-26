@@ -1,12 +1,12 @@
 package bl;
 import DAO.UserDao;
 import model.User;
-import util.Application;
+import util.Factory;
 import java.sql.SQLException;
 import java.util.List;
 
 public class UserService {
-	private UserDao userDAO = new Application().start();
+	private UserDao userDAO = new Factory().getUserDao();
 
 
 	public boolean addUser(User user) throws SQLException {
@@ -23,4 +23,8 @@ public class UserService {
 	public List<User> selectOne(Long users_id) throws SQLException {return userDAO.selectOne(users_id);}
 
 	public List<User> getAll() throws SQLException {return userDAO.getAll();}
+
+	public int errorCheck(User user) throws SQLException {
+		return userDAO.errorCheck(user);
+	}
 }

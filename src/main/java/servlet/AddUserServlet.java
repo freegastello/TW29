@@ -11,18 +11,38 @@ import java.sql.SQLException;
 @WebServlet("/add_user")
 public class AddUserServlet extends HttpServlet {
 	private UserService userService = new UserService();
-	public static String mess;
+	private String str = "(0-9A-Za-zА-Яа-я_)";
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html; charset=UTF-8");
+		String text = null;
 		User user = createUser(request);
+
+//		System.out.println("AddUserServlet request = " + request.getParameter("name"));
+
+		try {
+			int x = userService.errorCheck(user);
+			if (x == 1) {
+				text = "Enter your name " + str;
+			} else if (x == 2) {
+				text = "User with the same name already exists " + str;
+			} else if (x == 3) {
+				text = "Enter your login " + str;
+			} else if (x == 4) {
+				text = "Enter your password " + str;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
 		try {
 			if (!userService.addUser(user)) {
 				response.sendRedirect(
 						"/?name=" + request.getParameter("name")
-						+ "&login=" + request.getParameter("login")
-						+ "&password=" + request.getParameter("password"));
+						+ "&login="		 + request.getParameter("login")
+						+ "&password="	 + request.getParameter("password")
+						+ "&message="	 + text);
 			} else {
 				response.sendRedirect("/");
 			}

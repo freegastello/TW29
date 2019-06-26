@@ -1,7 +1,7 @@
 package DAO;
 import model.User;
-import servlet.AddUserServlet;
 import util.DBUtils;
+
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
@@ -71,29 +71,25 @@ public class UserDAOImpl implements UserDao {
 		return false;
 	}
 
-	public boolean errorCheck(User user) {
+	public int errorCheck(User user) {
 		if (user.getName() == null || (!user.getName().matches(reg))) {
-			AddUserServlet.mess = "Enter your name " + str;
-			return false;
+			return 1;
 		}
 		boolean bool = searchFromSqlNameExist(user.getName());
 		if (bool) {
-			AddUserServlet.mess = "User with the same name already exists";
-			return false;
+			return 2;
 		}
 		if (user.getLogin() == null || (!user.getLogin().matches(reg))) {
-			AddUserServlet.mess = "Enter your login " + str;
-			return false;
+			return 3;
 		}
 		if (user.getPassword() == null || (!user.getPassword().matches(reg))) {
-			AddUserServlet.mess = "Enter your password " + str;
-			return false;
+			return 4;
 		}
-		return true;
+		return 0;
 	}
 
 	public boolean addUser(User user) {
-		if (!errorCheck(user)) {return false;}
+		if (errorCheck(user) != 0) {return false;}
 		String userName = user.getName();
 		String userLogin = user.getLogin();
 		String userPassword = user.getPassword();
