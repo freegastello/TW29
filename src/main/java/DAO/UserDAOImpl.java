@@ -1,7 +1,6 @@
 package DAO;
 import model.User;
 import util.DBUtils;
-
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
@@ -10,7 +9,6 @@ import java.util.List;
 public class UserDAOImpl implements UserDao {
 	private static Connection connection = DBUtils.getDBUtils().getConnection();
 	private String reg = "[0-9A-Za-zА-Яа-я_]+";
-	private static String str = "0-9A-Za-zА-Яа-я_";
 
 	public List<User> selectOne(Long users_id) {
 		List<User> arrayList = new ArrayList<>();

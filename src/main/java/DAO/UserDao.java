@@ -1,22 +1,19 @@
 package DAO;
 import model.User;
-import java.sql.SQLException;
 import java.util.List;
 
 public interface UserDao {
-	List<User> selectOne(Long users_id) throws SQLException;
+	List<User> selectOne(Long users_id);
 
-	List<User> getAll () throws SQLException;
+	List<User> getAll ();
 
-	boolean searchFromSqlNameExist(String userName) throws SQLException;
+	boolean searchFromSqlNameExist(String userName);
 
-	int errorCheck(User user) throws SQLException;
+	int errorCheck(User user);
 
-	boolean addUser(User user) throws SQLException;
+	boolean addUser(User user);
 
-	void delete(Long users_id) throws SQLException;
+	void delete(Long users_id);
 
-	void update(User user) throws SQLException;
-
-//	int errorMess(User user) throws SQLException;
+	void update(User user);
 }

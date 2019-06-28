@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
+import java.net.URLEncoder;
 
 @WebServlet("/add_user")
 public class AddUserServlet extends HttpServlet {
@@ -15,39 +15,28 @@ public class AddUserServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		request.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html; charset=UTF-8");
+		response.setCharacterEncoding("UTF-8");
+
 		String text = null;
 		User user = createUser(request);
 
-//		System.out.println("AddUserServlet request = " + request.getParameter("name"));
-
-		try {
-			int x = userService.errorCheck(user);
-			if (x == 1) {
-				text = "Enter your name " + str;
-			} else if (x == 2) {
-				text = "User with the same name already exists " + str;
-			} else if (x == 3) {
-				text = "Enter your login " + str;
-			} else if (x == 4) {
-				text = "Enter your password " + str;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+		int x = userService.errorCheck(user);
+		switch (x) {
+			case 1: text = "Enter your name" + str;	break;
+			case 2: text = "User with the same name already exists" + str; break;
+			case 3: text = "Enter your login" + str; break;
+			case 4: text = "Enter your password" + str;	break;
+			default: break;
 		}
 
-		try {
-			if (!userService.addUser(user)) {
-				response.sendRedirect(
-						"/?name=" + request.getParameter("name")
-						+ "&login="		 + request.getParameter("login")
-						+ "&password="	 + request.getParameter("password")
-						+ "&message="	 + text);
-			} else {
-				response.sendRedirect("/");
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+		if (!userService.addUser(user)) {
+			response.sendRedirect(
+					"/?name=" + URLEncoder.encode(request.getParameter("name"), "UTF-8")
+					+ "&login="		 + URLEncoder.encode(request.getParameter("login"), "UTF-8")
+					+ "&password="	 + URLEncoder.encode(request.getParameter("password"), "UTF-8")
+					+ "&message="	 + URLEncoder.encode(text, "UTF-8"));
+		} else {
+			response.sendRedirect("/");
 		}
 	}
 
@@ -71,5 +60,4 @@ public class AddUserServlet extends HttpServlet {
 		}
 		return user;
 	}
-
 }

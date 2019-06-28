@@ -4,12 +4,10 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import util.DBUtils;
-
 import java.util.List;
 
 public class UserHibernateDaoImpl implements UserDao {
 	private static SessionFactory sessionFactory = DBUtils.getDBUtils().getConfiguration();
-	private String str = "(0-9A-Za-zА-Яа-я_)";
 	private String reg = "[0-9A-Za-zА-Яа-я_]+";
 
 	public List getAll () {
@@ -77,7 +75,7 @@ public class UserHibernateDaoImpl implements UserDao {
 	}
 
 	public void update(User user) {
-		if (!user.getName().matches("[\\w]+")) return;
+		if (!user.getName().matches(reg)) return;
 		Session session = sessionFactory.openSession();
 		Transaction transaction;
 		transaction = session.beginTransaction();
