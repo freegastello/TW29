@@ -14,7 +14,9 @@ public class UserHibernateDaoImpl implements UserDao {
 		Session session = sessionFactory.openSession();
 		Transaction transaction;
 		transaction = session.beginTransaction();
+		System.out.println("Before Сheck sheet..........");
 		List users = session.createQuery("FROM User").list();
+		System.out.println("Сheck sheet = " + users.toString());
 		transaction.commit();
 		session.close();
 		return users;
@@ -112,6 +114,7 @@ public class UserHibernateDaoImpl implements UserDao {
 		} else {
 			userNow.setPassword(us.get(0).getPassword());
 		}
+		userNow.setRole(User.ROLE.USER);
 		try {
 			session.update(userNow);
 			System.out.println("Successfuly update by id = " + user.getUsers_id());

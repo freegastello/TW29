@@ -15,11 +15,15 @@ public class UserDAOImpl implements UserDao {
 		String query = "SELECT * FROM users WHERE users_id = " + users_id + ";";
 		try (PreparedStatement statement = connection.prepareStatement(query)) {
 			final ResultSet resultSet = statement.executeQuery();
+			User.ROLE roleIns = User.ROLE.USER;
 			if (resultSet.next()) {
 				String name = resultSet.getString("name");
 				String login = resultSet.getString("login");
 				String password = resultSet.getString(4);
-				arrayList.add(new User(users_id, name, login, password));
+				if (resultSet.getString(5).equals("ADMIN")) {
+					roleIns = User.ROLE.ADMIN;
+				}
+				arrayList.add(new User(users_id, name, login, password, roleIns));
 			}
 			System.out.println("-selectOne- worked correctly");
 		} catch (SQLException e) {
@@ -35,12 +39,19 @@ public class UserDAOImpl implements UserDao {
 		String query = "SELECT * FROM users ORDER BY users_id ASC;";
 		try (PreparedStatement statement = connection.prepareStatement(query)) {
 			final ResultSet resultSet = statement.executeQuery();
+			User.ROLE roleIns;
 			while (resultSet.next()) {
 				Long users_id = resultSet.getLong("users_id");
 				String name = resultSet.getString("name");
 				String login = resultSet.getString("login");
 				String password = resultSet.getString(4);
-				newUsers = new User(users_id, name, login, password);
+				int role = resultSet.getInt(5);
+				if (role == 1) {
+					roleIns = User.ROLE.ADMIN;
+				} else {
+					roleIns = User.ROLE.USER;
+				}
+				newUsers = new User(users_id, name, login, password, roleIns);
 				arrayList.add(newUsers);
 			}
 			System.out.println("getAll отработал правильно");
@@ -92,7 +103,7 @@ public class UserDAOImpl implements UserDao {
 		String userLogin = user.getLogin();
 		String userPassword = user.getPassword();
 
-		String queryInsert = "INSERT INTO users (name, login, password) VALUE (?, ?, ?);";
+		String queryInsert = "INSERT INTO users (name, login, password, role) VALUE (?, ?, ?, ?);";
 		try (final PreparedStatement addInsert = connection.prepareStatement(queryInsert)) {
 
 //			addInsert.setBigDecimal(1, null);
@@ -115,6 +126,7 @@ public class UserDAOImpl implements UserDao {
 				System.out.println("ERROR!!! addUser -> INSERT password не введён. Вставка не произведена.");
 				return false;
 			}
+			addInsert.setString(4, "0");
 			int num = addInsert.executeUpdate();
 			System.out.println("-addUser- Произведено = " + num + " вставок");
 		} catch (SQLException e) {
@@ -141,7 +153,7 @@ public class UserDAOImpl implements UserDao {
 	}
 
 	public void update(User user) {
-		if (!user.getName().matches("[\\w]+")) return;
+		if (!user.getName().matches(reg)) return;
 		Long   userUsers_id	= user.getUsers_id();
 		String userName		= user.getName();
 		String userLogin	= user.getLogin();

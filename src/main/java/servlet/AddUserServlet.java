@@ -17,15 +17,15 @@ public class AddUserServlet extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
 
-		String text = null;
+		String textError = null;
 		User user = createUser(request);
 
-		int x = userService.errorCheck(user);
-		switch (x) {
-			case 1: text = "Enter your name" + str;	break;
-			case 2: text = "User with the same name already exists" + str; break;
-			case 3: text = "Enter your login" + str; break;
-			case 4: text = "Enter your password" + str;	break;
+		int errorCheckNumber = userService.errorCheck(user);
+		switch (errorCheckNumber) {
+			case 1: textError = "Enter your name" + str; break;
+			case 2: textError = "User with the same name already exists" + str; break;
+			case 3: textError = "Enter your login" + str; break;
+			case 4: textError = "Enter your password" + str; break;
 			default: break;
 		}
 
@@ -34,7 +34,7 @@ public class AddUserServlet extends HttpServlet {
 					"/?name=" + URLEncoder.encode(request.getParameter("name"), "UTF-8")
 					+ "&login="		 + URLEncoder.encode(request.getParameter("login"), "UTF-8")
 					+ "&password="	 + URLEncoder.encode(request.getParameter("password"), "UTF-8")
-					+ "&message="	 + URLEncoder.encode(text, "UTF-8"));
+					+ "&message="	 + URLEncoder.encode(textError, "UTF-8"));
 		} else {
 			response.sendRedirect("/");
 		}
@@ -58,6 +58,7 @@ public class AddUserServlet extends HttpServlet {
 		} else {
 			user.setPassword(null);
 		}
+		user.setRole(User.ROLE.USER);
 		return user;
 	}
 }

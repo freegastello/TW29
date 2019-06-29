@@ -1,11 +1,11 @@
 package bl;
 import DAO.UserDao;
 import model.User;
-import util.CreateFactory;
+import util.Factory;
 import java.util.List;
 
 public class UserService {
-	private UserDao userDAO = CreateFactory.create();
+	private UserDao userDAO = Factory.create().getDao();
 
 
 	public boolean addUser(User user) {

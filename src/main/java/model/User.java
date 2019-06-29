@@ -13,14 +13,17 @@ public class User {
     private String login;
 	@Column(name = "password", length = 45)
     private String password;
+	@Column(name = "role", length = 45)
+	private ROLE role;
 
     public User() {}
 
-	public User(Long users_id, String name, String login, String password) {
+	public User(Long users_id, String name, String login, String password, ROLE role) {
 		this.users_id = users_id;
 		this.name	  = name;
 		this.login	  = login;
 		this.password = password;
+		this.role	  = role;
 	}
 
 	public Long getUsers_id() {
@@ -58,6 +61,15 @@ public class User {
 		this.password = password;
 	}
 
+	public ROLE getRole() {return role;}
+
+	public void setRole(ROLE role) {this.role = role;}
+
+	public enum ROLE {
+    	USER,
+		ADMIN
+    }
+
 	@Override
 	public String toString() {
 		return "User{" +
@@ -65,6 +77,7 @@ public class User {
 				", name='" + name + '\'' +
 				", login='" + login + '\'' +
 				", password='" + password + '\'' +
+				", role=" + role +
 				'}';
 	}
 }
