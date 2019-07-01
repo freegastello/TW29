@@ -5,9 +5,10 @@
 	<title>Title</title>
 </head>
 <body>
-
+<a href="/logout">Logout</a>
 <div id="one" style="border: 1px solid yellow;">
 	<h1>Создание CRUD приложения</h1>
+
 </div>
 <div>
 	<h3><c:out value="${requestScope.error}"/></h3>
@@ -23,7 +24,7 @@
 		<br>
 	</form>
 </div>
-
+<a href="/users">users</a>
 <div id="two" border="2" style="border: 1px solid red;" width="50%">
 	<h2>Список пользователей:</h2>
 
@@ -45,13 +46,13 @@
 				<td><c:out value="${user.password}"/></td>
 				<td><c:out value="${user.role}"/></td>
 				<td>
-					<form method="get" action="<c:url value='/update'/>">
+					<form method="get" action="<c:url value='/admin/update'/>">
 						<input type="number" hidden name="users_id" value="${user.users_id}"/>
 						<input type="submit" value="Редактировать"/>
 					</form>
 				</td>
 				<td>
-					<form method="post" action="<c:url value='/delete'/>">
+					<form method="post" action="<c:url value='/admin/delete'/>">
 						<input type="number" hidden name="users_id" value="${user.users_id}"/>
 						<input type="submit" name="delete" value="Удалить"/>
 					</form>
@@ -59,6 +60,7 @@
 			</tr>
 		</c:forEach>
 	</table>
+
 </div>
 
 </body>

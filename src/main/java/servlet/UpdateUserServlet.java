@@ -6,25 +6,49 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import static model.User.ROLE.ADMIN;
 
-@WebServlet("/update")
+@WebServlet("/admin/update")
 public class UpdateUserServlet extends HttpServlet {
 	private UserService userService = new UserService();
+	private String str = "(0-9A-Za-zА-Яа-я_)";
 
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		request.setCharacterEncoding("UTF-8");
 		User user = createUser(request);
-		userService.update(user);
-		response.sendRedirect("/");
+
+		String textError = null;
+		int errCode = userService.update(user);
+		if (errCode == 2 || errCode == 4) {
+			switch (errCode) {
+				case 2: textError = "User with the same name  already exists " + str; break;
+				case 4: textError = "User with the same login already exists " + str; break;
+				default: break;
+			}
+			request.setAttribute("error", textError);
+			request.getRequestDispatcher("/WEB-INF/view/update.jsp").forward(request, response);
+		} else {
+			response.sendRedirect("/admin");
+		}
 	}
 
 	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("UTF-8");
-		request.setAttribute("userMap", userService.selectOne(Long.valueOf(request.getParameter("users_id"))));
-		request.getRequestDispatcher("/WEB-INF/view/update.jsp").forward(request, response);
+	protected void doGet(HttpServletRequest request,
+		HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+//		if (session.getAttribute("role") != ADMIN) {
+		User user = (User) request.getSession().getAttribute("mySess");
+		if (user.getRole() != ADMIN) {
+			response.sendRedirect("/");
+		} else {
+			request.setCharacterEncoding("UTF-8");
+			request.setAttribute("userMap",
+					userService.selectOne(Long.valueOf(request.getParameter("users_id"))));
+			request.getRequestDispatcher("/WEB-INF/view/update.jsp").forward(request, response);
+		}
 	}
 
 	private User createUser(HttpServletRequest request) {

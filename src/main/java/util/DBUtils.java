@@ -9,12 +9,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBUtils {
-	//userDAO
-	//fabrika
-	//singletone
-
 	private static DBUtils dbUtils;
+
 	private DBUtils() {}
+
 	public static synchronized DBUtils getDBUtils() {
 		if (dbUtils == null) {
 			dbUtils = new DBUtils();
@@ -28,13 +26,13 @@ public class DBUtils {
 				.setProperty( "hibernate.connection.url",				"jdbc:mysql://localhost:3306/crud?useSSL=false")
 				.setProperty( "hibernate.connection.username",			"admin")
 				.setProperty( "hibernate.connection.password",			"admin")
-				.setProperty( "hibernate.connection.pool_size",			"2")
+				.setProperty( "hibernate.connection.pool_size",			"10")
 				.setProperty( "hibernate.connection.autocommit",		"false")
 				.setProperty( "hibernate.cache.provider_class",			"org.hibernate.cache.NoCacheProvider")
 				.setProperty( "hibernate.cache.use_second_level_cache", "false")
 				.setProperty( "hibernate.cache.use_query_cache",		"false")
 				.setProperty( "hibernate.dialect",						"org.hibernate.dialect.MySQL5Dialect")
-				.setProperty( "hibernate.show_sql",						"true")
+				.setProperty( "hibernate.show_sql",						"false")
 				.setProperty( "hibernate.current_session_context_class","thread")
 				.addAnnotatedClass(model.User.class)
 				;

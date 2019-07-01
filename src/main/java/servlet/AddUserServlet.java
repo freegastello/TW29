@@ -16,27 +16,26 @@ public class AddUserServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
-
-		String textError = null;
 		User user = createUser(request);
 
-		int errorCheckNumber = userService.errorCheck(user);
-		switch (errorCheckNumber) {
-			case 1: textError = "Enter your name" + str; break;
-			case 2: textError = "User with the same name already exists" + str; break;
-			case 3: textError = "Enter your login" + str; break;
-			case 4: textError = "Enter your password" + str; break;
-			default: break;
-		}
-
-		if (!userService.addUser(user)) {
+		String textError = null;
+		int errCode = userService.addUser(user);
+		if (errCode != 0) {
+			switch (errCode) {
+				case 1: textError = "Enter your name" + str; break;
+				case 2: textError = "User with the same name already exists" + str; break;
+				case 3: textError = "Enter your login" + str; break;
+				case 4: textError = "User with the same login already exists" + str; break;
+				case 5: textError = "Enter your password" + str; break;
+				default: break;
+			}
 			response.sendRedirect(
-					"/?name=" + URLEncoder.encode(request.getParameter("name"), "UTF-8")
+					"/admin?name=" + URLEncoder.encode(request.getParameter("name"), "UTF-8")
 					+ "&login="		 + URLEncoder.encode(request.getParameter("login"), "UTF-8")
 					+ "&password="	 + URLEncoder.encode(request.getParameter("password"), "UTF-8")
 					+ "&message="	 + URLEncoder.encode(textError, "UTF-8"));
 		} else {
-			response.sendRedirect("/");
+			response.sendRedirect("/admin");
 		}
 	}
 

@@ -9,11 +9,18 @@ public interface UserDao {
 
 	boolean searchFromSqlNameExist(String userName);
 
+	boolean searchFromSqlLoginExist(String userLogin);
+
 	int errorCheck(User user);
 
-	boolean addUser(User user);
+	int addUser(User user);
 
 	void delete(Long users_id);
 
-	void update(User user);
+	int update(User user);
+
+	boolean userIsExist(String login, String password);
+
+	List<User> checkUserAndGetRole(String login, String password);
+
 }

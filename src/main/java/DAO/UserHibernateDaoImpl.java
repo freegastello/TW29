@@ -14,9 +14,7 @@ public class UserHibernateDaoImpl implements UserDao {
 		Session session = sessionFactory.openSession();
 		Transaction transaction;
 		transaction = session.beginTransaction();
-		System.out.println("Before Сheck sheet..........");
 		List users = session.createQuery("FROM User").list();
-		System.out.println("Сheck sheet = " + users.toString());
 		transaction.commit();
 		session.close();
 		return users;
@@ -26,28 +24,33 @@ public class UserHibernateDaoImpl implements UserDao {
 		if (user.getName() == null || (!user.getName().matches(reg))) {
 			return 1;
 		}
-		boolean bool = searchFromSqlNameExist(user.getName());
-		if (bool) {
+		boolean boolName = searchFromSqlNameExist(user.getName());
+		if (boolName) {
 			return 2;
 		}
 		if (user.getLogin() == null || (!user.getLogin().matches(reg))) {
 			return 3;
 		}
-		if (user.getPassword() == null || (!user.getPassword().matches(reg))) {
+		boolean boolLog = searchFromSqlLoginExist(user.getLogin());
+		if (boolLog) {
 			return 4;
+		}
+		if (user.getPassword() == null || (!user.getPassword().matches(reg))) {
+			return 5;
 		}
 		return 0;
 	}
 
-	public boolean addUser(User user) {
-		if (errorCheck(user) != 0) {return false;}
+	public int addUser(User user) {
+		int x = errorCheck(user);
+		if (x != 0) {return x;}
 		Session session = sessionFactory.openSession();
 		Transaction transaction;
 		transaction = session.beginTransaction();
 		session.save(user);
 		transaction.commit();
 		session.close();
-		return true;
+		return x;
 	}
 
 	public void delete(Long users_id) {
@@ -66,18 +69,17 @@ public class UserHibernateDaoImpl implements UserDao {
 		session.close();
 	}
 
-	public List selectOne(Long users_id) {
+	public List<User> selectOne(Long users_id) {
 		Session session = sessionFactory.openSession();
 		Transaction transaction;
 		transaction = session.beginTransaction();
-		List users = session.createQuery("FROM User as u WHERE u.users_id = " + users_id).list();
+		List<User> users = session.createQuery("FROM User as u WHERE u.users_id = " + users_id).list();
 		transaction.commit();
 		session.close();
 		return users;
 	}
 
-	public void update(User user) {
-		if (!user.getName().matches(reg)) return;
+	public int update(User user) {
 		Session session = sessionFactory.openSession();
 		Transaction transaction;
 		transaction = session.beginTransaction();
@@ -85,15 +87,20 @@ public class UserHibernateDaoImpl implements UserDao {
 		List<User> us = selectOne(user.getUsers_id());
 		if (us == null) {
 			System.out.println("ERROR!!! -update- is NULL");
-			return;
+			return 7;
 		}
 		if (us.get(0).getUsers_id().equals(user.getUsers_id()) &&
 			us.get(0).getName().equals(user.getName()) &&
 			us.get(0).getLogin().equals(user.getLogin()) &&
 			us.get(0).getPassword().equals(user.getPassword())) {
 			System.out.println("-update- Field values have not changed, database entry canceled");
-			return;
+			return 7;
 		}
+
+		if (searchFromSqlNameExist(user.getName()) == true
+				&& (!us.get(0).getName().equals(user.getName()))) return  2;
+		if (searchFromSqlLoginExist(user.getLogin()) == true
+				&& (!us.get(0).getLogin().equals(user.getLogin()))) return 4;
 
 		userNow.setUsers_id(user.getUsers_id());
 
@@ -124,6 +131,33 @@ public class UserHibernateDaoImpl implements UserDao {
 		}
 		transaction.commit();
 		session.close();
+		return 0;
+	}
+
+	@Override
+	public boolean userIsExist(String login, String password) {
+		Session session = sessionFactory.openSession();
+		Transaction transaction;
+		transaction = session.beginTransaction();
+		List name = session.createQuery("FROM User as u WHERE u.login = '" + login + "' and u.password = '" + password + "'").list();
+		transaction.commit();
+		session.close();
+		if (name.size() > 0) return true;
+		return false;
+	}
+
+	@Override
+	public List<User> checkUserAndGetRole(String login, String password) {
+		Session session = sessionFactory.openSession();
+		Transaction transaction;
+		transaction = session.beginTransaction();
+		@SuppressWarnings("unchecked")
+		List<User> role = session.createQuery("FROM User as u WHERE u.login = '" + login + "' and u.password = '" + password + "'").list();
+//		List role = session.createQuery("FROM User as u WHERE u.login = '" + login + "' and u.password = '" + password + "'").getSingleResult();
+//		session.createNativeQuery("SELECT Count(login) FROM User as u WHERE u.login = '" + login + "' and u.password = '" + password + "'");
+		transaction.commit();
+		session.close();
+		return role;
 	}
 
 	public boolean searchFromSqlNameExist(String userName) {
@@ -134,6 +168,21 @@ public class UserHibernateDaoImpl implements UserDao {
 		transaction.commit();
 		if (!name.isEmpty()) {
 			System.out.println("ERROR This name is already there, name = " + userName);
+			session.close();
+			return true;
+		}
+		session.close();
+		return false;
+	}
+
+	public boolean searchFromSqlLoginExist(String userLogin) {
+		Session session = sessionFactory.openSession();
+		Transaction transaction;
+		transaction = session.beginTransaction();
+		List login = session.createQuery("FROM User as u WHERE u.login = '" + userLogin + "'").list();
+		transaction.commit();
+		if (!login.isEmpty()) {
+			System.out.println("ERROR This login is already there, login = " + userLogin);
 			session.close();
 			return true;
 		}
