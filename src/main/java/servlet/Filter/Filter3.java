@@ -7,9 +7,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import static java.util.Objects.nonNull;
+import static model.User.ROLE.ADMIN;
 
-@WebFilter(filterName = "Filter2", urlPatterns = {"/login"})
-public class Filter2 implements javax.servlet.Filter {
+@WebFilter(filterName = "Filter3", urlPatterns = {"/admin"})
+public class Filter3 implements javax.servlet.Filter {
 
 	@Override
 	public void doFilter(final ServletRequest request,
@@ -20,22 +21,12 @@ public class Filter2 implements javax.servlet.Filter {
 		HttpSession session = req.getSession();
 		if (nonNull(session.getAttribute("mySess"))) {
 			User u = (User) session.getAttribute("mySess");
-			if (nonNull(u.getRole())) {
-				User.ROLE role = u.getRole();
-				switch (role) {
-					case ADMIN:
-						res.sendRedirect("/admin");
-						break;
-					case USER:
-						res.sendRedirect("/users");
-						break;
-					default:
-						res.sendRedirect("/login");
-						break;
-				}
+			User.ROLE role = u.getRole();
+			if (!ADMIN.equals(role)) {
+				res.sendRedirect("/logout");
+			} else {
+				filterChain.doFilter(req, res);
 			}
-		} else {
-			filterChain.doFilter(req, res);
 		}
 	}
 

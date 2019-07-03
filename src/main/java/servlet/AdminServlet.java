@@ -1,13 +1,11 @@
 package servlet;
 import bl.UserService;
-import model.User;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import static model.User.ROLE.ADMIN;
 
 @WebServlet("/admin")
 public class AdminServlet extends HttpServlet {
@@ -16,20 +14,15 @@ public class AdminServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request,
 						 HttpServletResponse response) throws ServletException, IOException {
-		User user = (User) request.getSession().getAttribute("mySess");
-		if (user.getRole() != ADMIN) {
-			response.sendRedirect("/");
-		} else {
-			request.setCharacterEncoding("UTF-8");
-			response.setContentType("text/html; charset=UTF-8");
-			request.setAttribute("error",		request.getParameter("message"));
-			request.setAttribute("name",		request.getParameter("name"));
-			request.setAttribute("login",		request.getParameter("login"));
-			request.setAttribute("password",	request.getParameter("password"));
-			request.setAttribute("role",		request.getParameter("role"));
-			request.setAttribute("users",		userService.getAll());
-			request.getRequestDispatcher("/WEB-INF/view/admin.jsp").forward(request, response);
-		}
+		request.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html; charset=UTF-8");
+		request.setAttribute("error",		request.getParameter("message"));
+		request.setAttribute("name",		request.getParameter("name"));
+		request.setAttribute("login",		request.getParameter("login"));
+		request.setAttribute("password",	request.getParameter("password"));
+		request.setAttribute("role",		request.getParameter("role"));
+		request.setAttribute("users",		userService.getAll());
+		request.getRequestDispatcher("/WEB-INF/view/admin.jsp").forward(request, response);
 	}
 }
 

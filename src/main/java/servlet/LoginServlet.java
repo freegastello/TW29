@@ -15,7 +15,6 @@ public class LoginServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request,
 						 HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("LoginServlet = doGet");
 		request.getRequestDispatcher("/WEB-INF/view/login.jsp").forward(request, response);
 	}
 
@@ -23,7 +22,6 @@ public class LoginServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request,
 						  HttpServletResponse response) throws ServletException, IOException {
 		UserService userService = new UserService();
-		System.out.println("LoginServlet = doPost");
 		String login	= request.getParameter("login");
 		String password	= request.getParameter("password");
 
